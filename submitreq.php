@@ -1,17 +1,16 @@
 <?php
 session_start();
+require_once 'conn.php';
+
 //check to see if user has logged in with a valid password
-/* if (!isset($_SESSION['USER_ID']) & ($_SESSION['access_lvl'] != 2))
+if (!isset($_SESSION['user_id']) && !isset($_SESSION['access_lvl']))
 {
- if ($_SESSION['access_lvl'] != 1){
-$redirect = $_SERVER['PHP_SELF'];
-header("Refresh: 5; URL=login.php?redirect=$redirect");
-echo "Sorry, but you don’t have permission to view this page! You are being redirected to the login page!<br>";
-echo "(If your browser doesn’t support this, " .
-"<a href=\"login.php?redirect=$redirect\">click here</a>)";
+header("Location:./");
+}
+else if($_SESSION['access_lvl'] != 2){
+header("Location:error-401.php?/access=denied/");
 die();
 }
-} */
 
  $id = $_POST["id"];
  $code = $_POST["code"];
@@ -24,20 +23,18 @@ die();
  $requestby = $_POST["requestby"];
  $givenby = $_POST["givenby"];
  $location = $_POST["location"];
- $colour = $_POST["colour"];
+ //$colour = $_POST["colour"];
  $destination = $_POST["destination"];
 
 
-if ($_POST['reqdate'] !='0000-00-00' and $_POST['reqdate'] !='')
+if (isset($_POST['reqdate']) !='0000-00-00' and isset($_POST['reqdate']) !='')
 {
-$rdate = $_POST['reqdate'];
-list($dayy, $monthh, $yearr) = explode('-', $rdate);
-$reqdate = $yearr . '-' . $monthh . '-' . $dayy;
-#echo $dob;
+$rdate = strtotime($_POST['reqdate']);
+	$reqdate = date('Y-m-d',$rdate);
+}else{
+	$reqdate = date('Y-m-d',time());
 }
 
-
- require_once 'conn.php';
  
  if (isset($_POST['submit']))
  {
@@ -144,7 +141,7 @@ $reqdate = $yearr . '-' . $monthh . '-' . $dayy;
       break;
      case 'Delete':
       {
-       $query_delete = "DELETE FROM requisition WHERE `ID` = '$id';";
+       echo $query_delete = "DELETE FROM requisition WHERE `ID` = '$id';";die();
 
        $result_delete = mysql_query($query_delete);          
 

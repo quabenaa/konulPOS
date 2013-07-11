@@ -36,7 +36,8 @@ if(isset($_REQUEST['date']) || !empty($_REQUEST['date'])){
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Stock - POS Management System</title>
+		<title>Sales Report - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Static & Dynamic Tables" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -187,7 +188,7 @@ if(isset($_REQUEST['date']) || !empty($_REQUEST['date'])){
 					<ul class="submenu">
 						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
 						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>
@@ -242,6 +243,7 @@ if(isset($_REQUEST['date']) || !empty($_REQUEST['date'])){
 					<ul class="submenu">
 						<li><a href="userslist.php"><i class="icon-double-angle-right"></i> Users</a></li>
 						<li><a href="settings.php"><i class="icon-double-angle-right"></i> System</a></li>
+                        <li><a href="customerslist.php"><i class="icon-double-angle-right"></i> Customers</a></li>
 				     </ul>
 				  </li>
 				<?php
@@ -333,21 +335,8 @@ if(isset($_REQUEST['date']) || !empty($_REQUEST['date'])){
 				 <TD>" . date('d-m-Y',strtotime($date)) . "</TD>
 				 <TD><small>$name</small></TD><TD>$qnty</TD><TD>$total </TD><TD> $discount</span></TD>
 				 <TD>$bal</TD>
-				 <td>
-						<div class='hidden-phone visible-desktop btn-group'>
-							<span class='btn btn-mini'><a href = 'asales.php?ID=$id&code=$code' class='white'><i class='icon-edit' data-rel='tooltip' title='Edit' data-placement='left'></i></a></span>
-							<span class='btn btn-mini btn-danger'><i class='icon-trash'></i></span>
-						</div>
-						<div class='hidden-desktop visible-phone'>";
-							$table.='<div class="inline position-relative">
-								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down icon-only"></i></button>
-								<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
-									<li><a href="asales.php?ID='.$id.'&code='.$code.'" class="tooltip-success" data-rel="tooltip" title="Edit" data-placement="left"><span class="green"><i class="icon-edit"></i></span></a></li>
-									<li><a href="#" class="tooltip-error" data-rel="tooltip" title="Delete" data-placement="left"><span class="red"><i class="icon-trash"></i></span> </a></li>
-								</ul>
-							</div>
-						</div>
-					</td>';
+				 <TD></TD>
+				 ";
 				echo $table;
 				}
 				?>

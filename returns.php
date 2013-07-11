@@ -12,36 +12,88 @@ else if($_SESSION['access_lvl'] != 2 && $_SESSION['access_lvl'] != 4){
 die();
 }
 
-if (!isset($_SESSION['cust_token']))
-{
-$_SESSION['cust_token'] = time();
-}
+ if (isset($_POST['submit']))
+ { 
+ switch ($_POST['submit'])
+   {
+     case 'edit':
+################### STOCK UPDATE ###################
+        $query_stup = "SELECT `Stock Code`,`Stock Name`,`Sales Date`,`Balance`,`Qnty Sold`,`cust_id`  
+		FROM `sales` WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
+         $result_stup = mysql_query($query_stup)or die(mysql_error());
+		 
+       while(list($stcd,$stnam,$stdat,$abl,$qsold,$cdd)=mysql_fetch_row($result_stup))
+       {
+        $query_update = "UPDATE `stock` SET `Units in Stock` = (`Units in Stock` + " . $qsold . "),`stocksold` = (`stocksold` + " .$qsold . ") WHERE `Stock Code`='$stcd'";
+        $result_update = mysql_query($query_update);
+       }
+	   ################### END STOCK UPDATE ###################
+	   
+	   $query_insert = "INSERT INTO tempsales 
+		(`Stock Code`,`Stock Name`,`Sales Date`,`Unit Cost`,`Location`,`Total Cost`,`Qnty Sold`,`Discount`,`Deposit`,`Sold By`, `Balance`, `Paid`, `Sold To`, `Sold Name`,`Entered By`,`cust_id`) 
+          SELECT 
+		  `Stock Code`,`Stock Name`,`Sales Date`,`Unit Cost`,`Location`,`Total Cost`,`Qnty Sold`,`Discount`,`Deposit`,`Sold By`, `Balance`, `Paid`, `Sold To`, `Sold Name`, `Entered By`,`cust_id` 
+			 FROM `sales` 
+		 WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
 
-if(isset($_REQUEST['Tit'])){
-@$Tit=$_SESSION['Tit'];
-}else{$Tit='';}
+        $result_insert = mysql_query($query_insert) or die(mysql_error());
+		
 
-if(isset($_REQUEST['code'])){
-@$code=$_REQUEST['code'];
-$codd=$_REQUEST["code"];
- }else{$code=0;
- $codd=0;
+       ##################### MONITOR #####################
+            $sql = "SELECT * FROM cms_access_levels Where access_lvl='" . $_SESSION['access_lvl'] ."'";
+            $result = mysql_query($sql,$conn);
+            $rows = mysql_fetch_array($result);
+
+            $query_update_Log = "Insert into `monitor` (`User Category`, `User Name`,`Date Logged on`, `Time Logged on`,`File Used`,`Details`) 
+                  VALUES ('" . $rows['access_name'] . "','" . ucfirst($_SESSION['name']) . "', '" . date('Y/m/d') . "', '" . date('h:i A') . "','Sales Return', 'Return Sales Transaction for Receipt #: " . $_SESSION['cust_return'] . "')";
+
+            $result_update_Log = mysql_query($query_update_Log);
+           ##################### END MONITOR #####################
+		   break;
+		   
+		   case 'cancel':
+		   $_SESSION['cust_return']='';
+		   header("location:return.php");
+		   break;
+		   
+		case 'return':
+		 
+		################### STOCK UPDATE ###################
+        $query_stup = "SELECT `Stock Code`,`Stock Name`,`Sales Date`,`Balance`,`Qnty Sold`,`cust_id`  
+		FROM `sales` WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
+         $result_stup = mysql_query($query_stup)or die(mysql_error());
+		 
+       while(list($stcd,$stnam,$stdat,$abl,$qsold,$cdd)=mysql_fetch_row($result_stup))
+       {
+        $query_update = "UPDATE `stock` SET `Units in Stock` = (`Units in Stock` + " . $qsold . "),`stocksold` = (`stocksold` - " .$qsold . ") WHERE `Stock Code`='$stcd'";
+        $result_update = mysql_query($query_update);
+       }
+	   ################### END STOCK UPDATE ###################
+	  
+		$query_delete = "DELETE FROM `sales` WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
+		$result_delete = mysql_query($query_delete) or die(mysql_error());
+		
+       ##################### MONITOR #####################
+            $sql = "SELECT * FROM cms_access_levels Where access_lvl='" . $_SESSION['access_lvl'] ."'";
+            $result = mysql_query($sql,$conn) or die(mysql_error());
+            $rows = mysql_fetch_array($result) or die(mysql_error());
+
+            $query_update_Log = "Insert into `monitor` (`User Category`, `User Name`,`Date Logged on`, `Time Logged on`,`File Used`,`Details`) 
+                  VALUES ('" . $rows['access_name'] . "','" . ucfirst($_SESSION['name']) . "', '" . date('Y/m/d') . "', '" . date('h:i A') . "','Sales Return', 'Returned All Items for Sales Transaction for Receipt #: " . $_SESSION['cust_return'] . "')";
+
+            $result_update_Log = mysql_query($query_update_Log);
+           ##################### END MONITOR #####################
+		    header("location:return.php");
+		   break;
+   }
  }
 
-if(isset($_REQUEST['id'])){
-@$id=$_REQUEST['id'];
- }else{$id = '';}
-
-if(isset($_GET['tval'])){
-@$tval=$_REQUEST['tval'];
- }else{$tval='';}
- 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Retail Sales - KONUL [ POS Management System ]</title>
+		<title>Return Sales - KONUL [ POS Management System ]</title>
         <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Static & Dynamic Tables" />
 
@@ -156,7 +208,7 @@ $(document).ready(function(){
 		<div class="navbar navbar-inverse">
 		  <div class="navbar-inner">
 		   <div class="container-fluid">
-			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Konul</small> </a>
+			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Test Supermarket</small> </a>
 			  <ul class="nav ace-nav pull-right">
 					<li class="white">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -317,10 +369,8 @@ $(document).ready(function(){
 					<div id="page-content" class="clearfix">
 						
 						<div class="page-header position-relative">
-							<h1>Point of Sales<small></small>
-                            <?php if ($_SESSION['access_lvl'] == 2){  ?>					  				
-                            <a class="btn btn-app btn-inverse btn-mini pull-right" href="return.php"><i class="icon-shopping-cart"></i>Returns</a>
-                            <?php }?>
+							<h1>Return Sales<small></small>
+                            <a class="btn btn-app btn-success btn-mini pull-right" href="sales.php"><i class="icon-shopping-cart"></i>Sales</a>
                             </h1>
 						</div><!--/page-header-->
 
@@ -374,7 +424,7 @@ $row2 = mysql_fetch_array($result2);
 if (isset($id) && !empty($id)){
 ?>
 <div class="span4">
-<form id="subsales" action="submitsales.php" method="post">
+<form id="subsales" action="submitreturn.php" method="post">
 <table cellpadding="6" cellspacing="8" width="100%" class="alert alert-info">
       <tr>
         <td>Stock Code:<br>
@@ -421,9 +471,9 @@ if (isset($id) && !empty($id)){
     
 	<?php } ?>
              <div class="span4">
- <form id="subsales" action="submitsales.php" method="post">
+ <form id="subsales" action="submitreturn.php" method="post">
 <?php
-    $queryy="SELECT sum((`Total Cost`)-`Discount`) as balsum FROM `tempsales` WHERE `Entered By` ='" . strtoupper($_SESSION['name']) . "' and `Sales Date`='" . date('Y-m-d') . "' and `cust_id` = '" . $_SESSION['cust_token'] . "'";
+    $queryy="SELECT sum((`Total Cost`)-`Discount`) as balsum FROM `tempsales`  WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
     $resultt=mysql_query($queryy);
     $roww = mysql_fetch_array($resultt);
     $balsum= $roww['balsum'];
@@ -460,8 +510,8 @@ if (isset($id) && !empty($id)){
 	<tr>
   <td colspan="2" align="left" class="well">Total Sales:<input name="t2" style="color:#1596C2; font-weight:bold" type="hidden" onKeyUp="return autocalc(this,t1)" value="<?php echo ((-1)*$balsum) ?>">
   <?php echo "<strong class='green'>" . number_format($balsum,2) . "</strong>";?> &nbsp;
-    <button name="submit" type="submit"  class="btn btn-info btn-mini" value="Complete Sales" align="top">Complete Sales </button>
-    <button name="submit" type="submit"  class="btn btn-success btn-mini" value="New Sales" align="top">New Sales </button></td>
+    <button name="submit" type="submit"  class="btn btn-info btn-mini" value="Complete Sales" align="top">Complete</button>
+    <button name="submit" type="submit"  class="btn btn-success btn-mini" value="Cancel" align="top">Cancel</button></td>
   </tr>
   <tr>
     <td colspan="3" align="left">
@@ -477,32 +527,17 @@ if (isset($id) && !empty($id)){
 
 <TABLE width='100%' class="table table-striped table-bordered" align='center'>
  <?php
- 
- if(isset($_GET['tval'])){
- $tval=$_GET['tval'];
- }else{$tval=0;}
- 
- $limit      = 50;
 
-if(isset($_GET['page'])){
- $page=$_GET['page'];
-   }else{$page=0;}
-
-if(isset($_REQUEST["cmbFilter"]) && !empty($_REQUEST["cmbFilter"])){
- $cmbFilter=$_REQUEST["cmbFilter"];
- }else{$cmbFilter='';}
-
-
-   $query_count    = "SELECT * FROM `tempsales` WHERE `Entered By` ='" . strtoupper($_SESSION['name']) . "' and `Sales Date`='" . date('Y-m-d') . "' and `cust_id` = '" . $_SESSION['cust_token'] . "'";
+   $query_count    = "SELECT * FROM `tempsales` WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
    $result_count   = mysql_query($query_count);     
    $totalrows  = mysql_num_rows($result_count);
 
     echo "<thead>
-	<TR><TH colspan='9'><small>Thi is Sales By ".strtoupper($_SESSION['name'])."</small></TH><TR>
+	<TR><TH colspan='9'><small>This is Sales By ".strtoupper($_SESSION['name'])."</small></TH><TR>
 	<TR><TH><small>#</small> </TH><TH align='left'><small>Barcode</small></TH><TH align='left'><small>Product</small> </TH>
       <TH align='right'><small>Qnty Sold</small> </TH><TH align='right'><small>Price</small> </TH><TH align='right' class='hidden-phone'><small>Total Sales</small></TH><TH align='right'><small>Discount</small> </TH><TH align='right'><small>Amount To Pay</small> </TH><TH align='left' class='hidden-phone'><small>Payment Type</small></TH></TR></thead><tbody>";
 
-   $query="SELECT `ID`,`Sales Date`,`Stock Name`,`Stock Code`,`Qnty Sold`,`Unit Cost`,`Total Cost`,`Deposit`,`Discount`,`Paid` FROM `tempsales` WHERE `Entered By` ='" . strtoupper($_SESSION['name']) . "' and `Sales Date`='" . date('Y-m-d') . "' and `cust_id` = '" . $_SESSION['cust_token'] . "' order by `ID` desc";
+   $query="SELECT `ID`,`Sales Date`,`Stock Name`,`Stock Code`,`Qnty Sold`,`Unit Cost`,`Total Cost`,`Deposit`,`Discount`,`Paid` FROM `tempsales` WHERE `cust_id` = '" . $_SESSION['cust_return'] . "' order by `ID` desc";
    $result=mysql_query($query);
 
 $i=0;
@@ -516,11 +551,11 @@ $i=0;
      $discount=number_format($discount,2);
 
      $i=$i+1;
-     echo "<TR><TD>$i &nbsp;</TD><TD align='left'><a href = 'sales.php?id=$id&code=$code'>$code</a></TD><TD align='left'> $name &nbsp;</TD><TD align='right'>$qnty &nbsp;</TD>
+     echo "<TR><TD>$i &nbsp;</TD><TD align='left'><a href = 'returns.php?id=$id&code=$code'>$code</a></TD><TD align='left'> $name &nbsp;</TD><TD align='right'>$qnty &nbsp;</TD>
       <TD align='right'>$price &nbsp;</TD><TD align='right' class='hidden-phone'>$total &nbsp;</TD><TD align='right'>$discount &nbsp;</TD><TD align='right'>$bal &nbsp;</TD><TD align='left' class='hidden-phone'>$paid &nbsp;</TD></TR>";
     }
 
-    $queryy="SELECT sum(`Qnty Sold`) as Qnty,sum(`Deposit`) as Deposit,sum(`Discount`) as Discount,sum(`Total Cost`) as Totsum,sum((`Unit Cost`)-`Discount`) as balsum FROM `tempsales` WHERE `Entered By` ='" . strtoupper($_SESSION['name']) . "' and `Sales Date`='" . date('Y-m-d') . "' and `cust_id` = '" . $_SESSION['cust_token'] . "'";
+    $queryy="SELECT sum(`Qnty Sold`) as Qnty,sum(`Deposit`) as Deposit,sum(`Discount`) as Discount,sum(`Total Cost`) as Totsum,sum((`Unit Cost`)-`Discount`) as balsum FROM `tempsales` WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
     $resultt=mysql_query($queryy);
     $roww = mysql_fetch_array($resultt);
 

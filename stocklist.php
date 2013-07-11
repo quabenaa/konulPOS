@@ -48,7 +48,8 @@ $result  = mysql_query($query) OR die(mysql_error());
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Stock - POS Management System</title>
+		<title>Main Stock - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Static & Dynamic Tables" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -100,7 +101,7 @@ $result  = mysql_query($query) OR die(mysql_error());
 		<div class="navbar navbar-inverse">
 		  <div class="navbar-inner">
 		   <div class="container-fluid">
-			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Test Supermarket</small> </a>
+			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Konul</small> </a>
 			  <ul class="nav ace-nav pull-right">
 					<li class="white">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -174,7 +175,7 @@ $result  = mysql_query($query) OR die(mysql_error());
 					<ul class="submenu">
 						<li class="active"><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stock</a></li>
 						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>

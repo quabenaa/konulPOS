@@ -11,16 +11,14 @@ else if($_SESSION['access_lvl'] != 2){
 header("Location:error-401.php?/access=denied/");
 die();
 }
-
-//$query="SELECT `User Category`, `User Name` , `Date Logged On`, `Time Logged On`,`File Used`,`Details` From 
-//		Monitor order by `Date Logged on` desc, `Time Logged On` desc";
-// $result  = mysql_query($query); 
+ 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>System Logs - POS Management System</title>
+		<title>System Logs - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Static & Dynamic Tables" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -94,7 +92,7 @@ die();
 		<div class="navbar navbar-inverse">
 		  <div class="navbar-inner">
 		   <div class="container-fluid">
-			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Test Supermarket</small> </a>
+			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Konul</small> </a>
 			  <ul class="nav ace-nav pull-right">
 					<li class="white">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -171,7 +169,7 @@ die();
 					<ul class="submenu">
 						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
 						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>
@@ -226,6 +224,7 @@ die();
 					<ul class="submenu">
 						<li><a href="userslist.php"><i class="icon-double-angle-right"></i> Users</a></li>
 						<li><a href="settings.php"><i class="icon-double-angle-right"></i> System</a></li>
+                        <li><a href="customerslist.php"><i class="icon-double-angle-right"></i> Customers</a></li>
 				     </ul>
 				  </li>
 				<?php

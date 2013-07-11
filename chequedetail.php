@@ -24,7 +24,8 @@ $row = mysql_fetch_array($result);
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Stock Record - POS Management System</title>
+		<title>Cheque - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Common form elements and layouts" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -88,7 +89,7 @@ function autocalc(oText)
 		<div class="navbar navbar-inverse">
 		  <div class="navbar-inner">
 		   <div class="container-fluid">
-			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Test Supermarket</small> </a>
+			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Konul</small> </a>
 			  <ul class="nav ace-nav pull-right">
 					<li class="white">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -165,7 +166,7 @@ function autocalc(oText)
 					<ul class="submenu">
 						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
 						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>
@@ -220,6 +221,7 @@ function autocalc(oText)
 					<ul class="submenu">
 						<li><a href="userslist.php"><i class="icon-double-angle-right"></i> Users</a></li>
 						<li><a href="settings.php"><i class="icon-double-angle-right"></i> System</a></li>
+                        <li><a href="customerslist.php"><i class="icon-double-angle-right"></i> Customers</a></li>
 				     </ul>
 				  </li>
 				<?php

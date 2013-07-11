@@ -20,7 +20,7 @@ $sql="SELECT * FROM wastage WHERE `ID`='$id'";
 $result = mysql_query($sql,$conn) or die('Could not look up user data; ' . mysql_error());
 $row = mysql_fetch_array($result);
 
-$sql2="SELECT * FROM `warehouse` WHERE `Stock Code`='$code'";
+$sql2="SELECT * FROM stock WHERE `Stock Code`='$code' or `Stock Name`='$code'";
 $result2 = mysql_query($sql2,$conn) or die('Could not look up user data; ' . mysql_error());
 $row2 = mysql_fetch_array($result2);
 
@@ -36,7 +36,8 @@ $row2 = mysql_fetch_array($result2);
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Wastage Record - POS Management System</title>
+		<title>Wastage - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Common form elements and layouts" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -69,6 +70,13 @@ $row2 = mysql_fetch_array($result2);
 		<!--[if lt IE 9]>
 		  <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
 		<![endif]-->
+        <!-- autoComplete-->
+		<link rel="stylesheet" href="assets/css/smoothness/jquery-ui-1.8.2.custom.css" /> 
+        <style type="text/css"><!--
+	
+	        /* style the auto-complete response */
+	        li.ui-menu-item { font-size:12px !important; z-index:10 !important;}	
+	--></style>
 <script type="text/javascript" language="javascript">
 
 function autocalc(oText)
@@ -98,7 +106,7 @@ oForm.balance.value = balance.toFixed(2); //out
 		<div class="navbar navbar-inverse">
 		  <div class="navbar-inner">
 		   <div class="container-fluid">
-			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Test Supermarket</small> </a>
+			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Konul</small> </a>
 			  <ul class="nav ace-nav pull-right">
 					<li class="white">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -170,10 +178,10 @@ oForm.balance.value = balance.toFixed(2); //out
 						<b class="arrow icon-angle-down"></b>
 					  </a>
 					<ul class="submenu">
-						<li class="active"><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
+						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
 						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
-						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
+						<li class="active"><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>
 					
@@ -264,7 +272,7 @@ oForm.balance.value = balance.toFixed(2); //out
                                       <td class="controls controls-row">
                                         <label class="small-labels">Enter Stock Name</label> 
                                        <span class="input-icon"><i class="icon-search"></i>
-										<input type="text" name="code" id="code" class="input-large" value="<?php echo @$code; ?>">
+										<input type="text" name="code" id="code1" class="input-large" value="<?php echo @$code; ?>">
                                         </span><br>
                                        <button type="submit" name="submit" value="Go" class="btn btn-info btn-block">
                                        <i class="icon-search"></i> Search</button>
@@ -285,7 +293,7 @@ oForm.balance.value = balance.toFixed(2); //out
 								        <tr>
 								          <td class="controls controls-row"><label class="small-labels">Stock Code</label>
 										<span class="input-icon"><i class="icon-barcode"></i>
-                                          <input type="text" name="code" id="code" class="input-large" value="<?php echo @$row2['Stock Code']; ?>"></span>                                          <input type="hidden" name="id"  size="20" value="<?php echo @$row['ID']; ?>"></td>
+                                          <input type="text" name="code" id="code" class="input-large" value="<?php echo @$row2['Stock Code']; ?>"></span>                                   </td>
 						          </tr>
 								        <tr>
 								          <td class="controls controls-row"><label class="small-labels">Stock Name</label>
@@ -370,18 +378,19 @@ oForm.balance.value = balance.toFixed(2); //out
                             </div><!--/row-->   
                                 <div class="form-actions">
                                 <?php
-								if(!isset($code)){
+								if(!isset($id)){
 								?>
-								<button class="btn btn-success" type="submit" name="submit" value="Save and Reconcile">
+								<button class="btn btn-success" type="submit" name="submit" value="Save">
                                 <i class="icon-save"></i>Save<span class="badge badge-transparent"></span></button>
 								<button class="btn btn-warning" type="reset">
                                 <i class="icon-undo"></i>Reset<span class="badge badge-transparent"></span></button>
 								<?php } 
 								 else { ?>
-								<button class="btn btn-success" type="submit" name="submit" value="Update and Reconcile">
+								<button class="btn btn-success" type="submit" name="submit" value="Update">
                                 <i class="icon-save"></i>Update<span class="badge badge-transparent"></span></button>
 								<button class="btn btn-danger" type="submit" name="submit" value="Delete">
                                 <i class="icon-trash"></i>Delete<span class="badge badge-transparent"></span></button>
+                                <input type="hidden" name="id"  size="20" value="<?php echo @$row['ID']; ?>">
 								<?php
 								} ?>
 							</div>
@@ -407,12 +416,17 @@ oForm.balance.value = balance.toFixed(2); //out
 
 
 		<!-- basic scripts -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script type="text/javascript">
-		window.jQuery || document.write("<script src='assets/js/jquery-1.9.1.min.js'>\x3C/script>");
-		</script>
+		<script src='assets/js/jquery-1.9.1.min.js'></script>
 		
 		<script src="assets/js/bootstrap.min.js"></script>
+        
+        <!-- autoComplete-->
+		<script type="text/javascript" src="assets/js/jquery-ui-1.8.2.custom.min.js"></script> 
+		<script type="text/javascript">  
+		jQuery(document).ready(function(){
+			$('#code1').autocomplete({source:'suggest_product.php', minLength:2});
+		});
+		</script>
 
 		<!-- page specific plugin scripts -->
 		

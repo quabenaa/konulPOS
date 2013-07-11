@@ -99,7 +99,7 @@ $rrdate = $yearr . '-' . $monthh . '-' . $dayy;
       }
       break;
      case 'Save and Reconcile':
-      if (Trim($code) != "")
+      if (trim($code) != "")
       { 
         $query_update = "UPDATE `stock` SET `Units in Stock` = (`Units in Stock` + " . $qntyadded . ") WHERE `Stock Code`='$code'";
 #        $query_update = "UPDATE `stock` SET `lastrestock`=" . $id . ",`Units in Stock` = (`Units in Stock` + " . $qntyadded . ") WHERE `Stock Code`='$code' and `lastrestock` <> " . $id;
@@ -167,9 +167,9 @@ $rrdate = $yearr . '-' . $monthh . '-' . $dayy;
       }
       break;     
      case 'Update and Reconcile':
-      if (Trim($code) != "")
+      if (trim($code) != "")
       {
-        $query_update = "UPDATE `warehouse` SET `Units in Stock` = (`Units in Stock` + " . $qntyadded . ") WHERE `Stock Code`='$code'";
+        $query_update = "UPDATE `stock` SET `Units in Stock` = (`Units in Stock` + " . $qntyadded . ") WHERE `Stock Code`='$code'";
 
         $result_update = mysql_query($query_update);
 
@@ -184,7 +184,7 @@ $rrdate = $yearr . '-' . $monthh . '-' . $dayy;
             $result = mysql_query($sql,$conn);
             $rows = mysql_fetch_array($result);
 
-            $query_update_Log = "Insert into `Monitor` (`User Category`, `User Name`,`Date Logged on`, `Time Logged on`,`File Used`,`Details`) 
+            $query_update_Log = "Insert into `monitor` (`User Category`, `User Name`,`Date Logged on`, `Time Logged on`,`File Used`,`Details`) 
                   VALUES ('" . $rows['access_name'] . "','" . ucfirst($_SESSION['name']) . "', '" . date('Y/m/d') . "', '" . date('h:i A') . "','Re-Stock Record','Modified Re-Stock Record for Stock: " . $code . ", " . $stockname . "')";
 
             $result_update_Log = mysql_query($query_update_Log);

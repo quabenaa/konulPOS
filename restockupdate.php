@@ -20,7 +20,7 @@ $sql="SELECT * FROM restock WHERE `restock`.`ID`='$id'";
 $result = mysql_query($sql,$conn) or die('Could not look up user data; ' . mysql_error());
 $row = mysql_fetch_array($result);
 
-$sql2="SELECT * FROM `stock` WHERE `Stock Code`='$code'";
+$sql2="SELECT * FROM stock WHERE `Stock Code`='$code' or `Stock Name`='$code'";
 $result2 = mysql_query($sql2,$conn) or die('Could not look up user data; ' . mysql_error());
 $row2 = mysql_fetch_array($result2);
 
@@ -36,7 +36,8 @@ $row2 = mysql_fetch_array($result2);
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Stock Record - POS Management System</title>
+		<title>Restock - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Common form elements and layouts" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -58,9 +59,11 @@ $row2 = mysql_fetch_array($result2);
 		<link rel="stylesheet" href="assets/css/datepicker.css" />
 		<link rel="stylesheet" href="assets/css/bootstrap-timepicker.css" />
 		<link rel="stylesheet" href="assets/css/daterangepicker.css" />
-		<link rel="stylesheet" href="assets/css/colorpicker.css" />
         <!-- Plupload -->
 		<link rel="stylesheet" href="assets/css/jquery.plupload.queue.css">
+        
+         <!-- autoComplete-->
+		<link rel="stylesheet" href="assets/css/smoothness/jquery-ui-1.8.2.custom.css" /> 
 
 		<!-- ace styles -->
 		<link rel="stylesheet" href="assets/css/ace.min.css" />
@@ -69,6 +72,12 @@ $row2 = mysql_fetch_array($result2);
 		<!--[if lt IE 9]>
 		  <link rel="stylesheet" href="assets/css/ace-ie.min.css" />
 		<![endif]-->
+        
+        <style type="text/css"><!--
+	
+	        /* style the auto-complete response */
+	        li.ui-menu-item { font-size:12px !important; z-index:10 !important;}	
+	--></style>
 <script type="text/javascript" language="javascript">
 
 function autocalc(oText)
@@ -170,9 +179,9 @@ oForm.balance.value = balance.toFixed(2); //out
 						<b class="arrow icon-angle-down"></b>
 					  </a>
 					<ul class="submenu">
-						<li class="active"><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
-						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
+						<li class="active"><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>
@@ -264,7 +273,7 @@ oForm.balance.value = balance.toFixed(2); //out
                                       <td class="controls controls-row">
                                         <label class="small-labels">Enter Stock Name</label> 
                                        <span class="input-icon"><i class="icon-search"></i>
-										<input type="text" name="code" id="code" class="input-large" value="<?php echo @$code; ?>">
+										<input type="text" name="code" id="code1" class="input-large" value="<?php echo @$code; ?>">
                                         </span><br>
                                        <button type="submit" name="submit" value="Go" class="btn btn-info btn-block">
                                        <i class="icon-search"></i> Search</button>
@@ -285,12 +294,12 @@ oForm.balance.value = balance.toFixed(2); //out
 								        <tr>
 								          <td class="controls controls-row"><label class="small-labels">Stock Code</label>
 										<span class="input-icon"><i class="icon-barcode"></i>
-                                          <input type="text" name="code" id="code" class="input-large" value="<?php echo @$code; ?>"></span>                                          <input type="hidden" name="id"  size="20" value="<?php echo @$row['ID']; ?>"></td>
+                                          <input type="text" name="code" id="code" class="input-large" value="<?php echo @$row2['Stock Code']; ?>"></span>                                          </td>
 						          </tr>
 								        <tr>
 								          <td class="controls controls-row"><label class="small-labels">Stock Name</label>
                                        <span class="input-icon"> <i class="icon-resize-vertical"></i>
-									<input type="text" class="input-large" name="stockname" value="<?php echo @$row['Stock Name']; ?>" /></span>
+									<input type="text" class="input-large" name="stockname" value="<?php echo @$row2['Stock Name']; ?>" /></span>
                                      </td>
 							            </tr>
                                         <tr>
@@ -310,9 +319,9 @@ oForm.balance.value = balance.toFixed(2); //out
 							            </tr>
 								        <tr>
 								          <td class="controls controls-row"><label class="small-labels">Category</label>
-                                          <select name="category" size="1" class='input-large' value="<?php echo @$row['Category']; ?>">
+                                          <select name="category" size="1" class='input-large' value="<?php echo @$row2['Category']; ?>">
 									  <?php  
-                                       echo '<option selected>' . @$row['Category'] . '</option>';
+                                       echo '<option selected>' . @$row2['Category'] . '</option>';
                                        $sql = "SELECT * FROM `Stock Category`";
                                        $result_status = mysql_query($sql,$conn) or die('Could not list value; ' . mysql_error());
                                        while ($rows = mysql_fetch_array($result_status)) 
@@ -409,7 +418,7 @@ oForm.balance.value = balance.toFixed(2); //out
                             </div><!--/row-->   
                                 <div class="form-actions">
                                 <?php
-								if(!isset($code)){
+								if(!isset($id)){
 								?>
 								<button class="btn btn-success" type="submit" name="submit" value="Save and Reconcile">
                                 <i class="icon-save"></i>Save<span class="badge badge-transparent"></span></button>
@@ -421,6 +430,7 @@ oForm.balance.value = balance.toFixed(2); //out
                                 <i class="icon-save"></i>Update<span class="badge badge-transparent"></span></button>
 								<button class="btn btn-danger" type="submit" name="submit" value="Delete">
                                 <i class="icon-trash"></i>Delete<span class="badge badge-transparent"></span></button>
+                                <input type="hidden" name="id"  size="20" value="<?php echo @$row['ID']; ?>">
 								<?php
 								} ?>
 							</div>
@@ -446,12 +456,17 @@ oForm.balance.value = balance.toFixed(2); //out
 
 
 		<!-- basic scripts -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script type="text/javascript">
-		window.jQuery || document.write("<script src='assets/js/jquery-1.9.1.min.js'>\x3C/script>");
-		</script>
+		<script src='assets/js/jquery-1.9.1.min.js'></script>
 		
 		<script src="assets/js/bootstrap.min.js"></script>
+        
+        <!-- autoComplete-->
+		<script type="text/javascript" src="assets/js/jquery-ui-1.8.2.custom.min.js"></script> 
+		<script type="text/javascript">  
+		jQuery(document).ready(function(){
+			$('#code1').autocomplete({source:'suggest_product.php', minLength:2});
+		});
+		</script>
 
 		<!-- page specific plugin scripts -->
 		
@@ -495,19 +510,7 @@ oForm.balance.value = balance.toFixed(2); //out
 		<script type="text/javascript">
 		
 		$(function() {
-			$('#id-disable-check').on('click', function() {
-				var inp = $('#form-input-readonly').get(0);
-				if(inp.hasAttribute('disabled')) {
-					inp.setAttribute('readonly' , 'true');
-					inp.removeAttribute('disabled');
-					inp.value="This text field is readonly!";
-				}
-				else {
-					inp.setAttribute('disabled' , 'disabled');
-					inp.removeAttribute('readonly');
-					inp.value="This text field is disabled!";
-				}
-			});
+
 		
 		
 			$(".chzn-select").chosen(); 
@@ -525,178 +528,9 @@ oForm.balance.value = balance.toFixed(2); //out
 					limitText: 'max allowed : %n.'
 				});
 			});
-			
-			$.mask.definitions['~']='[+-]';
-			$('.input-mask-date').mask('99/99/9999');
-			$('.input-mask-phone').mask('(999) 999-9999');
-			$('.input-mask-eyescript').mask('~9.99 ~9.99 999');
-			$(".input-mask-product").mask("a*-999-a999",{placeholder:" ",completed:function(){alert("You typed the following: "+this.val());}});
-			
-			
-			
-			$( "#input-size-slider" ).css('width','200px').slider({
-				value:1,
-				range: "min",
-				min: 1,
-				max: 6,
-				step: 1,
-				slide: function( event, ui ) {
-					var sizing = ['', 'input-mini', 'input-small', 'input-large', 'input-large', 'input-xlarge', 'input-xxlarge'];
-					var val = parseInt(ui.value);
-					$('#form-field-4').attr('class', sizing[val]).val('.'+sizing[val]);
-				}
-			});
-
-			$( "#input-span-slider" ).slider({
-				value:1,
-				range: "min",
-				min: 1,
-				max: 11,
-				step: 1,
-				slide: function( event, ui ) {
-					var val = parseInt(ui.value);
-					$('#form-field-5').attr('class', 'span'+val).val('.span'+val).next().attr('class', 'span'+(12-val)).val('.span'+(12-val));
-				}
-			});
-			
-			
-			var $tooltip = $("<div class='tooltip right in' style='display:none;'><div class='tooltip-arrow'></div><div class='tooltip-inner'></div></div>").appendTo('body');
-			$( "#slider-range" ).css('height','200px').slider({
-				orientation: "vertical",
-				range: true,
-				min: 0,
-				max: 100,
-				values: [ 17, 67 ],
-				slide: function( event, ui ) {
-					var val = ui.values[$(ui.handle).index()-1]+"";
-					
-					var pos = $(ui.handle).offset();
-					$tooltip.show().children().eq(1).text(val);		
-					$tooltip.css({top:pos.top - 10 , left:pos.left + 18});
-					
-					//$(this).find('a').eq(which).attr('data-original-title' , val).tooltip('show');
-				}
-			});
-			$('#slider-range a').tooltip({placement:'right', trigger:'manual', animation:false}).blur(function(){
-				$tooltip.hide();
-				//$(this).tooltip('hide');
-			});
-			//$('#slider-range a').tooltip({placement:'right', animation:false});
-			
-			$( "#slider-range-max" ).slider({
-				range: "max",
-				min: 1,
-				max: 10,
-				value: 2,
-				//slide: function( event, ui ) {
-				//	$( "#amount" ).val( ui.value );
-				//}
-			});
-			//$( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
-			
-			$( "#eq > span" ).css({width:'90%', float:'left', margin:'15px'}).each(function() {
-				// read initial values from markup and remove that
-				var value = parseInt( $( this ).text(), 10 );
-				$( this ).empty().slider({
-					value: value,
-					range: "min",
-					animate: true
-					
-				});
-			});
-
-			
-			$('#id-input-file-1 , #id-input-file-2').ace_file_input({
-				no_file:'No File ...',
-				btn_choose:'Choose',
-				btn_change:'Change',
-				droppable:false,
-				onchange:null,
-				thumbnail:false, //| true | large
-				//whitelist:'gif|png|jpg|jpeg'
-				//blacklist:'exe|php'
-				//onchange:''
-				//
-			});
-			
-			$('#id-input-file-3').ace_file_input({
-				style:'well',
-				btn_choose:'Drop files here or click to choose',
-				btn_change:null,
-				no_icon:'icon-cloud-upload',
-				droppable:true,
-				onchange:null,
-				thumbnail:'small',
-				before_change:function(files, dropped) {
-					/**
-					if(files instanceof Array || (!!window.FileList && files instanceof FileList)) {
-						//check each file and see if it is valid, if not return false or make a new array, add the valid files to it and return the array
-						//note: if files have not been dropped, this does not change the internal value of the file input element, as it is set by the browser, and further file uploading and handling should be done via ajax, etc, otherwise all selected files will be sent to server
-						//example:
-						var result = []
-						for(var i = 0; i < files.length; i++) {
-							var file = files[i];
-							if((/^image\//i).test(file.type) && file.size < 102400)
-								result.push(file);
-						}
-						return result;
-					}
-					*/
-					return true;
-				}
-				/*,
-				before_remove : function() {
-					return true;
-				}*/
-
-			}).on('change', function(){
-				//console.log($(this).data('ace_input_files'));
-				//console.log($(this).data('ace_input_method'));
-			});
-
-			
-			$('#spinner1').ace_spinner({value:0,min:0,max:200,step:10, btn_up_class:'btn-info' , btn_down_class:'btn-info'})
-			.on('change', function(){
-				//alert(this.value)
-			});
-			$('#spinner2').ace_spinner({value:0,min:0,max:10000,step:100, icon_up:'icon-caret-up', icon_down:'icon-caret-down'});
-			$('#spinner3').ace_spinner({value:0,min:-100,max:100,step:10, icon_up:'icon-plus', icon_down:'icon-minus', btn_up_class:'btn-success' , btn_down_class:'btn-danger'});
-
-			
-			/**
-			var stubDataSource = {
-			data: function (options, callback) {
-
-				setTimeout(function () {
-					callback({
-						data: [
-							{ name: 'Test Folder 1', type: 'folder', additionalParameters: { id: 'F1' } },
-							{ name: 'Test Folder 1', type: 'folder', additionalParameters: { id: 'F2' } },
-							{ name: 'Test Item 1', type: 'item', additionalParameters: { id: 'I1' } },
-							{ name: 'Test Item 2', type: 'item', additionalParameters: { id: 'I2' } }
-						]
-					});
-				}, 0);
-
-			}
-			};
-			$('#MyTree').tree({ dataSource: stubDataSource , multiSelect:true })
-			*/
-			
-			$('.date-picker').datepicker();
-			$('#timepicker1').timepicker({
-				minuteStep: 1,
-				showSeconds: true,
-				showMeridian: false
-			});
-			
-			$('#id-date-range-picker-1').daterangepicker();
-			
-			$('#colorpicker1').colorpicker();
-			$('#simple-colorpicker-1').ace_colorpicker();
 		
-			
-		$(".knob").knob();
+	
+			$('.date-picker').datepicker();
 	
 
 		});

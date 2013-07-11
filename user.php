@@ -29,7 +29,8 @@ $row = mysql_fetch_array($result);
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Stock Record - POS Management System</title>
+		<title>Users - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Common form elements and layouts" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -171,7 +172,7 @@ function autocalc(oText)
 					<ul class="submenu">
 						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
 						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>

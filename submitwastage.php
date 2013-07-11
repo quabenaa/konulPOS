@@ -13,7 +13,7 @@ die();
 }
 }
 
- $id = $_POST["id"];
+ @$id = $_POST["id"];
  $code = $_POST["code"];
  $category = $_POST["category"];
  $wdate = $_POST["wdate"];
@@ -41,22 +41,22 @@ $rrdate = $yearr . '-' . $monthh . '-' . $dayy;
      case 'Save':
       if (Trim($code) != "")
       { 
-        $query_update = "UPDATE `warehouse` SET `Units in Stock` = (`Units in Stock` - " . $qnty . ") WHERE `Stock Code`='$code'";
-        $result_update = mysql_query($query_update);
+       $query_update = "UPDATE `stock` SET `Units in Stock` = (`Units in Stock` - " . $qnty . ") WHERE `Stock Code`='$code' OR `Stock Name`='$stockname'";
+        $result_update = mysql_query($query_update) or die(mysql_error());
 
-        $query_insert = "Insert into wastage (`Stock Code`,`Category`,`Stock Name`, `Wastage Date`,`Approved By`,`Unit Cost`,`Detected By`,`Qnty`) 
-               VALUES ('$code','$category','$stockname','$rrdate','$approvedby','$unitcost','$detectedby','$qnty')";
-        $result_insert = mysql_query($query_insert);
+        $query_insert = "Insert into wastage (`Stock Code`,`Category`,`Stock Name`, `Wastage Date`,`Approved By`,`Detected By`,`Qnty`) 
+               VALUES ('$code','$category','$stockname','$rrdate','$approvedby','$detectedby','$qnty')";
+        $result_insert = mysql_query($query_insert) or die(mysql_error());
 
             #######
             $sql = "SELECT * FROM cms_access_levels Where access_lvl='" . $_SESSION['access_lvl'] ."'";
-            $result = mysql_query($sql,$conn);
-            $rows = mysql_fetch_array($result);
+            $result = mysql_query($sql,$conn) or die(mysql_error());
+            $rows = mysql_fetch_array($result) or die(mysql_error());
 
-            $query_insert_Log = "Insert into `Monitor` (`User Category`, `User Name`,`Date Logged on`, `Time Logged on`,`File Used`,`Details`) 
+            $query_insert_Log = "Insert into `monitor` (`User Category`, `User Name`,`Date Logged on`, `Time Logged on`,`File Used`,`Details`) 
                   VALUES ('" . $rows['access_name'] . "','" . ucfirst($_SESSION['name']) . "', '" . date('Y/m/d') . "', '" . date('h:i A') . "','Re-Stock Record','Added Re-Stock Record for Stock: " . $code . ", " . $stockname . "')";
 
-            $result_insert_Log = mysql_query($query_insert_Log);
+            $result_insert_Log = mysql_query($query_insert_Log) or die(mysql_error());
             ###### 
 
         $tval="Your record has been saved.";
@@ -91,7 +91,7 @@ $rrdate = $yearr . '-' . $monthh . '-' . $dayy;
      case 'Update':
       if (Trim($code) != "")
       {
-        $query_update = "UPDATE `warehouse` SET `Units in Stock` = (`Units in Stock` - " . $qntyadded . ") WHERE `Stock Code`='$code'";
+        $query_update = "UPDATE `stock` SET `Units in Stock` = (`Units in Stock` - " . $qntyadded . ") WHERE `Stock Code`='$code'";
         $result_update = mysql_query($query_update);
 
         $query_update2 = "UPDATE wastage SET `Stock Code` = '$code',`Category`='$category',`Stock Name`='$stockname',

@@ -23,7 +23,8 @@ $result=mysql_query($query);
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Stock - POS Management System</title>
+		<title>Restock - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Static & Dynamic Tables" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -149,7 +150,7 @@ $result=mysql_query($query);
 					<ul class="submenu">
 						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
 						<li class="active"><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>
@@ -287,7 +288,7 @@ $result=mysql_query($query);
 							$table.='<div class="inline position-relative">
 								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down icon-only"></i></button>
 								<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
-									<li><a href="stock.php?code='.$id.'" class="tooltip-success" data-rel="tooltip" title="Edit" data-placement="left"><span class="green"><i class="icon-edit"></i></span></a></li>
+									<li><a href="restockupdate.php??code='.$code.'&id='.$id.'" class="tooltip-success" data-rel="tooltip" title="Edit" data-placement="left"><span class="green"><i class="icon-edit"></i></span></a></li>
 									<li><a href="#" class="tooltip-error" data-rel="tooltip" title="Delete" data-placement="left"><span class="red"><i class="icon-trash"></i></span> </a></li>
 								</ul>
 							</div>

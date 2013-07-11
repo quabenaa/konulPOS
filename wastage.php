@@ -12,8 +12,6 @@ header("Location:error-401.php?/access=denied/");
 die();
 }
  
-
-
 $query="SELECT `ID`,`Stock Code`,`Stock Name`,`Wastage Date`,`Qnty`,`Detected By`,`Approved By` FROM `wastage` order by `Wastage Date` Desc";
 $result=mysql_query($query)or die(mysql_error()); 
 ?>
@@ -21,7 +19,8 @@ $result=mysql_query($query)or die(mysql_error());
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Stock - POS Management System</title>
+		<title>Wastage - KONUL [ POS Management System ]</title>
+        <link rel="icon" href="assets/images/favico.ico">
 		<meta name="description" content="Static & Dynamic Tables" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -67,13 +66,14 @@ $result=mysql_query($query)or die(mysql_error());
 		<!-- ace scripts -->
 		<script src="assets/js/ace-elements.min.js"></script>
 		<script src="assets/js/ace.min.js"></script>
+        
 	</head>
 
 	<body>
 		<div class="navbar navbar-inverse">
 		  <div class="navbar-inner">
 		   <div class="container-fluid">
-			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Test Supermarket</small> </a>
+			  <a class="brand" href="#"><small><i class="icon-shopping-cart"></i> Konul</small> </a>
 			  <ul class="nav ace-nav pull-right">
 					<li class="white">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -147,7 +147,7 @@ $result=mysql_query($query)or die(mysql_error());
 					<ul class="submenu">
 						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
 						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li class="active"><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>
@@ -200,6 +200,7 @@ $result=mysql_query($query)or die(mysql_error());
 					<ul class="submenu">
 						<li><a href="userslist.php"><i class="icon-double-angle-right"></i> Users</a></li>
 						<li><a href="settings.php"><i class="icon-double-angle-right"></i> System</a></li>
+                        <li><a href="customerslist.php">Customers</a></li>
 				     </ul>
 				  </li>
 				<?php
@@ -252,6 +253,8 @@ $result=mysql_query($query)or die(mysql_error());
 		<table id="table_report" class="table table-striped table-bordered table-hover">
 			<thead>
 				<tr>
+                	<th>
+                    <small>S/No</small></th>
 					<th>
                     <small>Wastage Date</small></th>
 					<th>
@@ -269,9 +272,12 @@ $result=mysql_query($query)or die(mysql_error());
 			<tbody>
 				
                 <?php 
+				$n=0;
 				while(list($id,$code,$name,$dates,$added,$recby,$suppby)=mysql_fetch_row($result))
 				{
+					$n++;
 				 $table="<TR>
+				 <TD>$n</TD>
 				 <TD>$dates</TD>
 				 	<TD>$name</TD>
 					<td><span class='badge badge-success'>$added</span></td>
@@ -279,14 +285,14 @@ $result=mysql_query($query)or die(mysql_error());
 					<td class='hidden-phone'>$suppby</td>
 					<td>
 						<div class='hidden-phone visible-desktop btn-group'>
-							<span class='btn btn-mini'><a href='requisitionupdate.php?code=$code&id=$id' class='white'><i class='icon-edit' data-rel='tooltip' title='Edit' data-placement='left'></i></a></span>
+							<span class='btn btn-mini'><a href='wastageupdate.php?code=$code&id=$id' class='white'><i class='icon-edit' data-rel='tooltip' title='Edit' data-placement='left'></i></a></span>
 							<span class='btn btn-mini btn-danger'><i class='icon-trash'></i></span>
 						</div>
 						<div class='hidden-desktop visible-phone'>";
 							$table.='<div class="inline position-relative">
 								<button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down icon-only"></i></button>
 								<ul class="dropdown-menu dropdown-icon-only dropdown-yellow pull-right dropdown-caret dropdown-close">
-									<li><a href="stock.php?code='.$id.'" class="tooltip-success" data-rel="tooltip" title="Edit" data-placement="left"><span class="green"><i class="icon-edit"></i></span></a></li>
+									<li><a href="wastageupdate.php?code='.$code.'&id='.$id.'" class="tooltip-success" data-rel="tooltip" title="Edit" data-placement="left"><span class="green"><i class="icon-edit"></i></span></a></li>
 									<li><a href="#" class="tooltip-error" data-rel="tooltip" title="Delete" data-placement="left"><span class="red"><i class="icon-trash"></i></span> </a></li>
 								</ul>
 							</div>

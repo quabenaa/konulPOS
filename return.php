@@ -12,13 +12,11 @@ else if($_SESSION['access_lvl'] != 2 && $_SESSION['access_lvl'] != 4){
 die();
 }
 
-if (!isset($_SESSION['cust_token']))
-{
- $_SESSION['cust_token'] = rand(10000000,99999999);
+if(!isset($_SESSION['cust_return'])){
+$_SESSION['cust_return'] = '';	
 }
-
 if(isset($_REQUEST["yourText"]) && !empty($_REQUEST["yourText"])){
- $yourText=$_REQUEST["yourText"];
+ $_SESSION['cust_return'] = $_REQUEST["yourText"];
 }
  
 ?>
@@ -75,16 +73,6 @@ if(isset($_REQUEST["yourText"]) && !empty($_REQUEST["yourText"])){
 	<script src="assets/js/TableTools.min.js"></script>
 	<script src="assets/js/ColReorder.min.js"></script>
 	<script src="assets/js/ColVis.min.js"></script>
-    <!-- autoComplete-->
-		<link rel="stylesheet" href="assets/css/smoothness/jquery-ui-1.8.2.custom.css" /> 
-	<!-- autoComplete-->
-		<script type="text/javascript" src="assets/js/jquery-ui-1.8.2.custom.min.js"></script> 
-	<script type="text/javascript"> 
- 
-		jQuery(document).ready(function(){
-			$('#yourText').autocomplete({source:'suggest_product.php', minLength:2});
-		});
-	</script>
 		<!-- ace scripts -->
 		<script src="assets/js/ace-elements.min.js"></script>
 		<script src="assets/js/ace.min.js"></script>
@@ -200,7 +188,7 @@ $(document).ready(function(){
 
 				<ul class="nav nav-list">
 					
-					<li>
+					<li  class="active">
 					  <a href="dashboard.php">
 						<i class="icon-dashboard"></i>
 						<span>Dashboard</span>
@@ -221,7 +209,7 @@ $(document).ready(function(){
 					<ul class="submenu">
 						<li><a href="stocklist.php"><i class="icon-double-angle-right"></i> Main Stocks</a></li>
 						<li><a href="restock.php"><i class="icon-double-angle-right"></i> Re-stock</a></li>
-						<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li>
+						<!--<li><a href="requisition.php"><i class="icon-double-angle-right"></i> Requisition</a></li> -->
 						<li><a href="wastage.php"><i class="icon-double-angle-right"></i> Wastage</a></li>
 				     </ul>
 				  </li>
@@ -231,12 +219,6 @@ $(document).ready(function(){
 					  <a href="sales.php">
 						<i class="icon-shopping-cart"></i>
 						<span>Retail Sales</span>
-					  </a>
-				  </li>
-                  <li  class="active">
-					  <a href="return.php">
-						<i class="icon-reply icon-2x icon-only"></i>
-						<span>Return Sales</span>
 					  </a>
 				  </li>
 				<?php }
@@ -282,6 +264,7 @@ $(document).ready(function(){
 					<ul class="submenu">
 						<li><a href="userslist.php"><i class="icon-double-angle-right"></i> Users</a></li>
 						<li><a href="settings.php"><i class="icon-double-angle-right"></i> System</a></li>
+                        <li><a href="customerslist.php"><i class="icon-double-angle-right"></i> Customers</a></li>
 				     </ul>
 				  </li>
 				<?php
@@ -306,7 +289,7 @@ $(document).ready(function(){
 					<div id="page-content" class="clearfix">
 						
 						<div class="page-header position-relative">
-							<h1>Point of Sales<small></small>
+							<h1>Return Sales<small></small>
                             <a class="btn btn-app btn-success btn-mini pull-right" href="sales.php"><i class="icon-shopping-cart"></i>Sales</a>
                             </h1>
 						</div><!--/page-header-->
@@ -329,52 +312,25 @@ $(document).ready(function(){
                </form>
              </div>
           </div>
-<form id="subsales" action="submitsales.php" method="post">
+<form id="subsales" action="returns.php" method="post">
 <div class="row-fluid">
 <!-- PAGE CONTENT BEGINS HERE -->
 <div class="span12">
 <?php
-    $queryy="SELECT sum((`Total Cost`)-`Discount`) as balsum FROM `tempsales` WHERE `Entered By` ='" . strtoupper($_SESSION['name']) . "' and `Sales Date`='" . date('Y-m-d') . "' and `cust_id` = '" . $_SESSION['cust_token'] . "'";
+    $queryy="SELECT sum((`Total Cost`)-`Discount`) as balsum FROM `sales` WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
     $resultt=mysql_query($queryy);
     $roww = mysql_fetch_array($resultt);
     $balsum= $roww['balsum'];
     $balsumm= number_format($roww['balsum'],2);
 ?>
   <table cellpadding="5" cellspacing="8">
-  <tr>
-  <td colspan="2" class="alert alert-info">
-    <label>Payment Type : </label>
-     <select name="payment" id="payment">
-        <option value="" disabled selected>Select Payment</option>
-        <option value="cash">Cash</option>
-        <option value="credit">Credit</option>
-	</select>
-	</td>
-  </tr>
-  <!-- pass field reference ('this') and other field references -->
- 
-  <tr  id="cash">
-  <td align="left" class="alert alert-success">
-  <label>Cash Given</label>
-  <span class="input-icon"><i class="icon-money"></i>
-  <input name="deposit" type="text" class="input-small" onKeyUp="return autocalc(this,t2)" size="10"></span></td>
-  <td align="left" class="alert alert-success">Change<br>
-    <input name="total" type="text" class="input-small" value="0" size="10" readonly></td>
-  </tr>
-  
-  <tr id="credit">
-  <td colspan="2" align="left" class="alert alert-success"><label>Creditor Name:</label>
-  <span class="input-icon"><i class="icon-user"></i>
-      <input name="creditorsname" type="text" class="input-large" id="creditorsname" /></span>
-	  </td>
-  </tr>
-  
-  
 	<tr>
   <td colspan="2" align="left" class="well">Total Sales:<input name="t2" style="color:#1596C2; font-weight:bold" type="hidden" onKeyUp="return autocalc(this,t1)" value="<?php echo ((-1)*$balsum) ?>">
   <?php echo "<strong class='green'>" . number_format($balsum,2) . "</strong>";?> &nbsp;
-    <button name="submit" type="submit"  class="btn btn-info btn-mini" value="Complete Sales" align="top">Complete Sales </button>
-    <button name="submit" type="submit"  class="btn btn-success btn-mini" value="New Sales" align="top">New Sales </button></td>
+    <button name="submit" type="submit"  class="btn btn-info btn-mini" value="edit" align="top">Edit Sales</button>
+    <button name="submit" type="submit"  class="btn btn-danger btn-mini" value="return" align="top">Return All</button>
+    <button name="submit" type="submit"  class="btn btn-success btn-mini" value="cancel" align="top">Cancel</button>
+    </td>
   </tr>
   <tr>
     <td colspan="3" align="left">
@@ -384,62 +340,8 @@ $(document).ready(function(){
   </table>
 </div>
 </div>
-<div class="row-fluid">
-<div class="span12">
-  <?php
-
-if(isset($yourText) && !empty($yourText))
-{
-$sql="SELECT * FROM stock WHERE `Stock Code` = '$yourText'";
-$result = mysql_query($sql,$conn) or die('Could not look up user data; ' . mysql_error());
-$row = mysql_fetch_array($result);
-}
-
-if(isset($_REQUEST['id'])){
-$id = $_REQUEST['id'];
-$sql2="SELECT * FROM `tempsales` WHERE ID='$id'";
-$result2 = mysql_query($sql2) or die('Could not look up user data; ' . mysql_error());
-$row2 = mysql_fetch_array($result2);
-}
-if (isset($id) && !empty($id)){
-?>
-<table cellpadding="5" cellspacing="8" class="alert alert-info">
-      <tr>
-        <td width="33%" height="28">Stock Code: <font style='font-size: 10pt' color="#00A452"><small><b> <?php echo @$row2['Stock Code']; ?>  </b></small></font>
-          <input type="hidden" name="id" size="31" value="<?php echo @$row2['ID']; ?>">
-          <input type="hidden" name="cod" size="31" value="<?php echo @$row2['Stock Code']; ?>">
-          </td>
-        <td width="33%" height="28">Stock Name: <font style='font-size: 9pt' color="#00A452"><small><b><?php echo @$row2['Stock Name']; ?></b></small></font>
-          <input type="hidden" name="stockname" size="31" value="<?php echo @$row2['Stock Name']; ?>"> 
-          </td>
-        <td width="34%">Unit Price: <font style='font-size: 10pt' color="#00A452"><small><b><?php echo @$row2['Unit Cost']; ?>  </b></small></font>
-          <input type="hidden" name="price" width="31" value="<?php echo @$row2['Unit Cost']; ?>"></td>
-        </tr>
-      <tr>
-        <td width="33%" height="28">Quantity Sold:<br>
-          <input name="qntysold" type="text" class="input-medium" style="height:25" onBlur="$_REQUEST['qntysold'];" value="<?php echo @$row2['Qnty Sold']; ?>" size="15" >
-          <br>
-          <input type="hidden" name="qntyinit" width="31" value="<?php echo @$row2['Qnty Sold']; ?>">
-          <input type="hidden" name="id3" size="31" value="<?php echo @$id; ?>">
-        </td>
-        <td width="33%" height="28">Discount Amount:<br>
-          <input name="discount" type="text" class="input-medium" style="height:25" value="<?php echo @$row2['Discount']; ?>" width="31"></td>
-        <td width="34%" height="28">Entered By: <font class='red'  style='font-size: 9pt'><small><b><?php echo strtoupper($_SESSION['name']); ?></b></small></font>
-          <input type="hidden" name="enteredby" size="31" value="<?php echo strtoupper($_SESSION['name']); ?>"></td>
-        </tr>
-      <tr>
-        <td height="28" colspan="3"> <?php
-                echo ' <button class="btn btn-success btn-mini" type="submit" value="Update" name="submit">
-                      <i class="icon-save"></i><span class="badge badge-transparent">Update</span></button>
-                      <button class="btn btn-danger btn-mini" type="submit" value="Delete" name="submit">
-                      <i class="icon-trash"></i><span class="badge badge-transparent">Delete</span></button>';
-         
-        ?></td>
-        </tr>
-          </table><?php } ?>
-        </div>
     </form>
-</div> 
+ 
 <div class="row-fluid">
 <div class="span12">
 
@@ -448,11 +350,11 @@ if (isset($id) && !empty($id)){
  
 
     echo "<thead>
-	<TR><TH colspan='9'><small>Receipt Number ".@$yourText."</small></TH><TR>
+	<TR><TH colspan='9'><small>Receipt Number <font class='red'>".@$_SESSION['cust_return']."</font></small></TH><TR>
 	<TR><TH><small>#</small> </TH><TH align='left'><small>Barcode</small></TH><TH align='left'><small>Product</small> </TH>
       <TH align='right'><small>Qnty Sold</small> </TH><TH align='right'><small>Price</small> </TH><TH align='right' class='hidden-phone'><small>Total Sales</small></TH><TH align='right'><small>Discount</small> </TH><TH align='right'><small>Amount To Pay</small> </TH><TH align='left' class='hidden-phone'><small>Payment Type</small></TH></TR></thead><tbody>";
 
-   $query="SELECT `ID`,`Sales Date`,`Stock Name`,`Stock Code`,`Qnty Sold`,`Unit Cost`,`Total Cost`,`Deposit`,`Discount`,`Paid` FROM `sales` WHERE `cust_id` = '" .$yourText . "' order by `ID` desc";
+   $query="SELECT `ID`,`Sales Date`,`Stock Name`,`Stock Code`,`Qnty Sold`,`Unit Cost`,`Total Cost`,`Deposit`,`Discount`,`Paid` FROM `sales` WHERE `cust_id` = '" .$_SESSION['cust_return'] . "' order by `ID` desc";
    $result=mysql_query($query);
 
 $i=0;
@@ -466,11 +368,11 @@ $i=0;
      $discount=number_format($discount,2);
 
      $i=$i+1;
-     echo "<TR><TD>$i &nbsp;</TD><TD align='left'><a href = 'sales.php?id=$id&code=$code'>$code</a></TD><TD align='left'> $name &nbsp;</TD><TD align='right'>$qnty &nbsp;</TD>
+     echo "<TR><TD>$i &nbsp;</TD><TD align='left'><a href = 'return.php?id=$id&code=$code'>$code</a></TD><TD align='left'> $name &nbsp;</TD><TD align='right'>$qnty &nbsp;</TD>
       <TD align='right'>$price &nbsp;</TD><TD align='right' class='hidden-phone'>$total &nbsp;</TD><TD align='right'>$discount &nbsp;</TD><TD align='right'>$bal &nbsp;</TD><TD align='left' class='hidden-phone'>$paid &nbsp;</TD></TR>";
     }
 
-    $queryy="SELECT sum(`Qnty Sold`) as Qnty,sum(`Deposit`) as Deposit,sum(`Discount`) as Discount,sum((`Qnty Sold`*`Unit Cost`)) as Totsum,sum((`Qnty Sold`*`Unit Cost`)-`Discount`-`Deposit`) as balsum FROM sales WHERE `cust_id` = '" . $yourText . "'";
+    $queryy="SELECT sum(`Qnty Sold`) as Qnty,sum(`Deposit`) as Deposit,sum(`Discount`) as Discount,sum((`Qnty Sold`*`Unit Cost`)) as Totsum,sum((`Qnty Sold`*`Unit Cost`)-`Discount`-`Deposit`) as balsum FROM sales WHERE `cust_id` = '" . $_SESSION['cust_return'] . "'";
     $resultt=mysql_query($queryy);
     $roww = mysql_fetch_array($resultt);
 
